@@ -2,19 +2,20 @@
 ---
 ### Laboratory Work 1 
 #### Online Shop for Clothes 
+
 **Implemented by: Wu Xenia-Qin Li**
+
 **Reviewed by: Maxim Volosenco**
 
 
 ---
-##### Assesess Application Suitability 
+#### Assesess Application Suitability 
 
 **Scalability**
 Microservices let each service grow separately if the demand for various components of application varies. For instance, during a sale, an e-commerce application can experience high traffic for product catalog updates but low traffic for checkouts.
 
 **Flexibility and Agility**
 Teams can work on various components of the application concurrently thanks to microservices, which accelerates development. Faster deployments result from changes to one microservice not necessarily having an impact on others.
-
 
 **Technoogy Diversity**
 Microservices makes possible to utilize the most suitable technology stack for each microservice, even if the application needs various programming languages or technologies for various components. Performance and development effectiveness could be enhanced by this.
@@ -46,12 +47,16 @@ Microservices can reduce the cost of the infrastructure. By allocating resources
 As an example could serve **Amazon**, which is an e-commerce platform that relies on microservices to handle various functions, from order processing to product recomentations. With this strategy, Amazon is able to maintain a high level of availability while adapting to shifting customer demands.
 
 ---
-##### Define Service Boundaries
+#### Define Service Boundaries
 
 **User Authentification Microservice:** This microservice handles login, authentication, and user registration. User profiles and authentication tokens are managed by it.
+
 **Product Catalog Microservice:** Product information management falls under the purview of the product catalog microservice. It keeps information about clothes, including names, descriptions, costs, and pictures. It may also have search and product classification features.
+
 **Order Management Microservice:** The processing of orders is handled by this microservice. It deals with order history, order updates (such shipping status), and order creation. Based on the chosen products, it determines the overall cost of orders.
+
 **Payment Gateway Microservice:** Even though it isn't specifically depicted in the diagram, it might have a different microservice in charge of processing payments. To enable safe and effective payment transactions, this service communicates with payment providers.
+
 **Client:** The user interface that clients interact with is represented by the frontend. In order to show products, handle user authentication, and control the shopping cart, it makes API calls to the microservices.
 
 ```mermaid
@@ -64,32 +69,46 @@ E --> F[DataBase]
 ```
 
 ---
-##### Choose Technology Stack and Communication Patterns 
+#### Choose Technology Stack and Communication Patterns 
+
 **User Authentificaton Microservice** 
+
 _Language:_ Python 
+
 _Framework:_ Flask 
+
 _Database:_ PostgreSQL
 
 **Product Catalog Microservice** 
+
 _Language:_ JavaScript (Node.js)
+
 _Framework:_ Express.js for building RESTful APIs
+
 _Database:_ MongoDB for storing information about the product (NoSQL database)
 
 **Order Management Microservice** 
+
 _Language:_ Python
+
 _Framework:_ Flask or FastAPI for building RESTful APIs
+
 _Database:_ PostgreSQL for storing order and user data (Relational database)
 
 **Payment Gateway Microservice**
+
 _Language:_ JavaScript
+
 _Framework:_ Express.js
+
 _Databese:_ PostgreSQL
 
 **Communication Patterns**
-The main communication pattern used in this project is request response model. Message queues(RabbitMQ/Kafka) will assure asyncronous communication between the microservices. 
+The main communication pattern used in this project is request-response model. Message queues(RabbitMQ/Kafka) will assure asyncronous communication between the microservices. 
 
 ---
-##### Data Design and Management 
+
+#### Data Design and Management 
 **User Authentification Microservice** 
 1. _Endpoint:_ `/register`
 * Method: POST
