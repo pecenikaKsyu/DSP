@@ -28,5 +28,26 @@ def create_order():
 def get_orders():
     return jsonify({'orders': orders}), 200
 
+# Endpoint to retrieve a specific order by order ID
+@app.route('/get_order/<int:order_id>', methods=['GET'])
+def get_order(order_id):
+    order = next((o for o in orders if o.get('order_id') == order_id), None)
+    if order is None:
+        return jsonify({'message': 'Order not found'}), 404
+    return jsonify(order), 200
+
+# Endpoint to update the status of an order by order ID
+@app.route('/update_order/<int:order_id>', methods=['PUT'])
+def update_order(order_id):
+    data = request.get_json()
+    new_status = data.get('status')
+    
+    for order in orders:
+        if order.get('order_id') == order_id:
+            order['status'] = new_status
+            return jsonify({'message': 'Order status updated'}), 200
+    
+    return jsonify({'message': 'Order not found'}), 404
+
 if __name__ == '__main__':
     app.run(port=5000)
