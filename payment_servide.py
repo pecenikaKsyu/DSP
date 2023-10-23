@@ -1,6 +1,18 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///payment_database.db'  # SQLite database for simplicity
+db = SQLAlchemy(app)
+
+# Define a Payment model
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), default='pending')
+
 
 # Temporary data store for payments (replace with a payment gateway integration in a production system)
 payments = []
@@ -12,15 +24,10 @@ def process_payment():
     amount = data['amount']
     payment_method = data['payment_method']
     
-    # Perform payment processing here (integration with a real payment gateway)
-    
-    payment = {
-        'order_id': order_id,
-        'amount': amount,
-        'status': 'completed'  # In a real system, check the payment status from the payment gateway
-    }
-    
-    payments.append(payment)
+    # Create a new payment record in the database
+    new_payment = Payment(order_id=order_id, amount=amount, payment_method=payment_method)
+    db.session.add(new_payment)
+    db.session.commit()
     
     return jsonify({'message': 'Payment processed successfully'}), 201
 
