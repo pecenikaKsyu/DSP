@@ -1,6 +1,17 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///order_database.db'
+db = SQLAlchemy(app)
+
+# Define an Order model
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(50), default='pending')
 
 # Temporary data store for orders (replace with a database in a production system)
 orders = []
@@ -12,15 +23,10 @@ def create_order():
     quantity = data['quantity']
     user_id = data['user_id']
     
-    # Perform validation and processing here
-    
-    order = {
-        'product_id': product_id,
-        'quantity': quantity,
-        'user_id': user_id,
-    }
-    
-    orders.append(order)
+    # Create a new order record in the database
+    new_order = Order(product_id=product_id, quantity=quantity, user_id=user_id)
+    db.session.add(new_order)
+    db.session.commit()
     
     return jsonify({'message': 'Order created successfully'}), 201
 
