@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  gateway:
+    build: ./Gateway
+    ports:
+      - '3000:3000'
+
+  service_discovery:
+    build: ./Service
+    ports:
+      - '3002:3002'
+
+  order_service:
+    build: ./Order
+    ports:
+      - '5000:5000'
+
+  payment_service:
+    build: ./Payment
+    ports:
+      - '5001:5001'
