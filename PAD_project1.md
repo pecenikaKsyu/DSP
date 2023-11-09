@@ -260,3 +260,6 @@ The main communication pattern used in this project is request-response model. M
 9. _Fault Tolerance:_ When designing microservices, consider fault tolerance. Use circuit breakers, fallback plans, and retry methods to gracefully handle failures.
 
 10. _Global Distribution:_ Consider employing Content Delivery Networks (CDNs) or microservice deployment in various areas if online clothes store caters to a global audience to reduce latency and enhance customer experience.
+
+##### Additional Tasks
+[Postman Collection] (https://documenter.getpostman.com/view/31050011/2s9YXiYgpm) 
