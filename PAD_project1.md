@@ -262,4 +262,4 @@ The main communication pattern used in this project is request-response model. M
 10. _Global Distribution:_ Consider employing Content Delivery Networks (CDNs) or microservice deployment in various areas if online clothes store caters to a global audience to reduce latency and enhance customer experience.
 
 ##### Additional Tasks
-[Postman Collection] (https://documenter.getpostman.com/view/31050011/2s9YXiYgpm) 
+[Postman Collection](https://documenter.getpostman.com/view/31050011/2s9YXiYgpm) 
