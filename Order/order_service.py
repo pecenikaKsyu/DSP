@@ -1,3 +1,4 @@
+from Order.order_cache import ConsistentHashing
 from RedirectError import should_simulate_redirect_error
 from RedirectError import RedirectError
 from flask import Flask, request, jsonify
@@ -12,6 +13,9 @@ db = SQLAlchemy(app)
 
 # Define a Circuit Breaker instance
 circuit_breaker = CircuitBreaker(fail_max=3, reset_timeout=10)
+
+# Create a ConsistentHashing instance for order service
+order_service_hashing = ConsistentHashing(nodes=["Server-A", "Server-B", "Server-C"])
 
 # Define an Order model
 class Order(db.Model):
@@ -31,6 +35,8 @@ def create_order():
     product_id = data['product_id']
     quantity = data['quantity']
     user_id = data['user_id']
+
+    responsible_server = order_service_hashing.get_node(str(user_id))
     
     if should_simulate_redirect_error(): 
         raise RedirectError("Simulated redirect error")
