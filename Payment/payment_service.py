@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from pybreaker import CircuitBreaker
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///payment_database.db'  # SQLite database for simplicity
@@ -13,11 +14,17 @@ class Payment(db.Model):
     payment_method = db.Column(db.String(50), nullable=False)
     status = db.Column(db.String(50), default='pending')
 
-
-# Temporary data store for payments (replace with a payment gateway integration in a production system)
 payments = []
 
+def custom_fail_function(circuit, error):
+    if isinstance(error, RedirectError):  
+        return True  
+    return False
+
+circuit_breaker = CircuitBreaker(fail_max=3, reset_timeout=10, fail_function=custom_fail_function)
+
 @app.route('/process_payment', methods=['POST'])
+@circuit_breaker
 def process_payment():
     data = request.get_json()
     order_id = data['order_id']
