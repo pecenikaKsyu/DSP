@@ -21,19 +21,22 @@ class Order(db.Model):
 orders = []
 
 @app.route('/create_order', methods=['POST'])
+@circuit_breaker
 def create_order():
     data = request.get_json()
     product_id = data['product_id']
     quantity = data['quantity']
     user_id = data['user_id']
     
+    if should_simulate_redirect_error(): 
+        raise RedirectError("Simulated redirect error")
+
     # Create a new order record in the database
     new_order = Order(product_id=product_id, quantity=quantity, user_id=user_id)
     db.session.add(new_order)
     db.session.commit()
     
     return jsonify({'message': 'Order created successfully'}), 201
-
 @app.route('/get_orders', methods=['GET'])
 def get_orders():
     return jsonify({'orders': orders}), 200
