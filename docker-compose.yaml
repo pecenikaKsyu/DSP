@@ -13,10 +13,18 @@ services:
 
   order_service:
     build: ./Order
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
     ports:
       - '5000:5000'
 
   payment_service:
     build: ./Payment
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
     ports:
       - '5001:5001'
