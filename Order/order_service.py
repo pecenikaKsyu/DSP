@@ -2,9 +2,11 @@ from RedirectError import should_simulate_redirect_error
 from RedirectError import RedirectError
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from pybreaker import CircuitBreaker
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///order_database.db'
 db = SQLAlchemy(app)
 
@@ -36,9 +38,19 @@ def create_order():
     # Create a new order record in the database
     new_order = Order(product_id=product_id, quantity=quantity, user_id=user_id)
     db.session.add(new_order)
-    db.session.commit()
-    
-    return jsonify({'message': 'Order created successfully'}), 201
+    payment_response = notify_payment_service(data)
+
+    if payment_response.get('success'):
+        db.session.commit()
+        return jsonify({'message': 'Order created and payment processed successfully'}), 201
+    else: 
+        db.session.rollback()
+        return jsonify({'message': 'Payment processing failed'}), 500
+
+def notify_payment_service(data):
+    # TODO: Implement logic to notify the payment_service endpoint
+    return {'success': True}
+
 @app.route('/get_orders', methods=['GET'])
 def get_orders():
     return jsonify({'orders': orders}), 200
