@@ -76,21 +76,5 @@ def update_order(order_id):
     
     return jsonify({'message': 'Order not found'}), 404
 
-# Add the Circuit Breaker to the create_order function
-@app.route('/create_order', methods=['POST'])
-@circuit_breaker
-def create_order():
-    data = request.get_json()
-    product_id = data['product_id']
-    quantity = data['quantity']
-    user_id = data['user_id']
-    
-    # Create a new order record in the database
-    new_order = Order(product_id=product_id, quantity=quantity, user_id=user_id)
-    db.session.add(new_order)
-    db.session.commit()
-    
-    return jsonify({'message': 'Order created successfully'}), 201
-
 if __name__ == '__main__':
     app.run(port=5000)
