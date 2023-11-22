@@ -1,3 +1,4 @@
+from Payment.payment_cache import ConsistentHashing
 from RedirectError import should_simulate_redirect_error
 from RedirectError import RedirectError
 from flask import Flask, request, jsonify
@@ -9,6 +10,9 @@ app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///payment_database.db'  # SQLite database for simplicity
 db = SQLAlchemy(app)
+
+# Create a ConsistentHashing instance for payment service
+payment_service_hashing = ConsistentHashing(nodes=["Server-A", "Server-B", "Server-C"])
 
 # Define a Payment model
 class Payment(db.Model):
@@ -34,6 +38,8 @@ def process_payment():
     order_id = data['order_id']
     amount = data['amount']
     payment_method = data['payment_method']
+
+    responsible_server = payment_service_hashing.get_node(str(order_id))
     
     # Create a new payment record in the database
     new_payment = Payment(order_id=order_id, amount=amount, payment_method=payment_method)
