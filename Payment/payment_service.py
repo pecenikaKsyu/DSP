@@ -2,9 +2,11 @@ from RedirectError import should_simulate_redirect_error
 from RedirectError import RedirectError
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from pybreaker import CircuitBreaker
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///payment_database.db'  # SQLite database for simplicity
 db = SQLAlchemy(app)
 
@@ -36,9 +38,12 @@ def process_payment():
     # Create a new payment record in the database
     new_payment = Payment(order_id=order_id, amount=amount, payment_method=payment_method)
     db.session.add(new_payment)
-    db.session.commit()
-    
-    return jsonify({'message': 'Payment processed successfully'}), 201
+    try: 
+        db.session.commit()
+        return jsonify({'message':'Payment processed successfully'}), 201
+    except Exception as e: 
+        db.session.rollback()
+        return jsonify({'message': 'Payment processing failed'}), 500
 
 @app.route('/get_payments', methods=['GET'])
 def get_payments():
